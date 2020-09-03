@@ -15,7 +15,7 @@ mydb = mysql.connector.connect(
 )
  
 # print(mydb)
-for m in range(1,2021): # m为计数器，有多少行数据后面的数+1 m为ff605序号
+for m in range(1,533): # m为计数器，有多少行数据后面的数+1 m为ff605序号
     p = "SELECT A3 FROM ff605 WHERE A1 = "+str(m) #选出子表党组织名字，data改为新表名
     print(p)
     mycursor = mydb.cursor() # 初始化数据库游标
@@ -25,9 +25,9 @@ for m in range(1,2021): # m为计数器，有多少行数据后面的数+1 m为f
     h = "%".join(j)
     k = "%"+h+"%"   #把关键词用%隔开
     print(k)
-    x = "\""+k+"\""
-    g = "SELECT count(*) FROM data where A2 like "+x #求得和C3相似的C2总数
-    g1 = "SELECT * FROM zz605 where A2 like"+x
+    x = "\'"+k+"\'"
+    g = "SELECT count(*) FROM zz605 where A2 like "+x #求得和C3相似的C2总数
+    g1 = "SELECT A1 FROM zz605 where A2 like "+x
     print(g)
  #  mycursor = mydb.cursor()
     mycursor.execute(g)
@@ -36,11 +36,22 @@ for m in range(1,2021): # m为计数器，有多少行数据后面的数+1 m为f
     b = d[0]
     print(b)
     if b == 0:
-        a = "UPDATE ss605 SET A6 = "+str(b)+" WHERE C1 = "+str(m)
+        a = "UPDATE ff605 SET A19 = 0"+" WHERE A1 = "+str(m) #没找到得在ff605标0
         print(a)
         mycursor.execute(a) #把重复量写回数据库，不是1的即为有重复
-    else:
+    elif b == 1:
         mycursor.execute(g1)
         ll = mycursor.fetchone()
+        print(ll)
         kk = ll[0]
-        ss = "UPDATE zz605 SET AX = "+str(g)+" WHERE C1 = "+str(kk)
+        print(kk)
+        ss = "UPDATE zz605 SET A6 = "+str(b)+" WHERE A1 = "+str(kk) #找到得在zz605标数量
+        mycursor.execute(ss)
+    else:
+        mycursor.execute(g1)
+        lll = mycursor.fetchall()
+        print(lll)
+        kkk = lll[0][0]
+        print(kkk)
+        sss = "UPDATE zz605 SET A6 = "+str(b)+" WHERE A1 = "+str(kkk) #找到得在zz605标数量
+        mycursor.execute(sss)
